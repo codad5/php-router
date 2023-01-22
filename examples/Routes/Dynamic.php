@@ -8,8 +8,16 @@ $jwt =  "hiigidhsd";
 $router = new Router(__DIR__ . "/views", "examples", '/dynamic');
 
 
-$router->run(function(){
-    echo "Men and Test me<br>";
+$router->run(function($req, $res){
+    # A code for rate limiting
+});
+
+$router->run(function($req, $res){
+    //redirect if  logged in
+    if(isset($_SESSION['is_login']))
+    {
+        return $res->redirect('/login');
+    }
 });
 /**
  * @desc [GET] Single dynamic route

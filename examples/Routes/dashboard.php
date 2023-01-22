@@ -8,8 +8,12 @@ $jwt =  "hiigidhsd";
 $router = new Router(__DIR__ . "/views", "examples", '/dashboard');
 
 
-$router->run(function(){
-    echo "Men and Test me <br>";
+$router->run(function($req, $res){
+    //redirect if not logged in
+    if(!isset($_SESSION['is_login']))
+    {
+        $res->redirect('/login');
+    }
 });
 
 /**

@@ -202,19 +202,34 @@ class Router
         $this->add_route($data, "PUT");
         return $this;
     }
-    # A general middleware for the request cycle 
+    # A general middleware for the request cycle
+    /**
+     * To add a middleware to run before the requested route
+     * @param mixed $callback
+     * @return Router
+     */
     public function run($callback)
     {
         $this->middlewares[] = $callback;
         return $this;
     }
     //added middleware functionality
+    /**
+     * To run all the middleware 
+     * @param Request $request
+     * @param Response $response
+     * @return void
+     */
     protected function run_middlewares(Request $request,Response $response)
     {
         $middleware = new Middleware($this->middlewares, $request, $response);
         $middleware->handle();
     }
-
+    /**
+     * To add an instance of Router to another instance of Router
+     * @param Router $router
+     * @return Router
+     */
     public function use_route(Router $router): Router
     {
 
@@ -222,7 +237,12 @@ class Router
         $this->routes = array_merge($router->routes, $this->routes);
         return $this;
     }
-
+    /**
+     * Load all params and middleware in a sub route
+     * @param Request $request
+     * @param Response $response
+     * @return void
+     */
     private function load_sub_route(Request $request, Response $response)
     {
         foreach($this->sub_routes as $route)
@@ -231,6 +251,7 @@ class Router
             if($main_router && strpos($main_router['path'], $route->prefix_route) === 0)
             {
                 $route->run_middlewares($request, $response);
+                break;
             }
         }
     }
@@ -291,9 +312,9 @@ class Router
             $params = count($route["params"] ?? []) > 0 ? $this->get_params_values($route) : [];
             $response = new Response($this->source_path);
             $request = new Request([$_GET, $_POST], $params, $this->request_path, $this->source_path);
-            $this->run_middlewares($request, $response);
-            $this->load_sub_route($request, $response);
             if ($route !== null) {
+                $this->run_middlewares($request, $response);
+                $this->load_sub_route($request, $response);
                 if (count($route["middleware"]) > 0) {
                     $middleware = new Middleware($route["middleware"], $request, $response);
                     $middleware->handle();
