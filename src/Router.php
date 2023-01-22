@@ -1,5 +1,4 @@
 <?php
-
 namespace Trulyao\PhpRouter;
 
 use Closure;
@@ -10,20 +9,27 @@ use Trulyao\PhpRouter\HTTP\Response as Response;
 
 class Router
 {
+    protected array $middlewares = [];
     protected string $source_path;
     protected string $base_path;
     protected string $method;
     protected string $request_path;
     protected array $request_params;
     public array $routes;
+    /**
+     * Summary of sub_routes
+     * @var array<Router>
+     */
+    protected array $sub_routes;
     protected array $allowed_content_types;
     protected ?string $route_cache;
     private $content_type;
     protected $prefix_route = '';
-    public function __construct($source_path, $base_path = "", string $prefix_route = '')
+
+    public function __construct($source_path, $base_path = "", $prefix_route = '')
     {
-        $this->prefix_route = $prefix_route;
         $this->source_path = $source_path;
+        $this->prefix_route = $prefix_route;
         $this->base_path = $base_path;
         $this->method = $_SERVER['REQUEST_METHOD'] ?? "GET";
         $this->strip_extra_url_data();
@@ -196,14 +202,37 @@ class Router
         $this->add_route($data, "PUT");
         return $this;
     }
-    /**
-     * Importing another route
-     * @param Router $router
-     * @return Router
-     */
-    public function use_route(Router $router): Router{
+    # A general middleware for the request cycle 
+    public function run($callback)
+    {
+        $this->middlewares[] = $callback;
+        return $this;
+    }
+    //added middleware functionality
+    protected function run_middlewares(Request $request,Response $response)
+    {
+        $middleware = new Middleware($this->middlewares, $request, $response);
+        $middleware->handle();
+    }
+
+    public function use_route(Router $router): Router
+    {
+
+        $this->sub_routes[] = $router;
         $this->routes = array_merge($router->routes, $this->routes);
         return $this;
+    }
+
+    private function load_sub_route(Request $request, Response $response)
+    {
+        foreach($this->sub_routes as $route)
+        {
+            $main_router = $this->get_route($_SERVER['REQUEST_URI'] ?? $this->request_path, strtoupper($_SERVER["REQUEST_METHOD"]));
+            if($main_router && strpos($main_router['path'], $route->prefix_route) === 0)
+            {
+                $route->run_middlewares($request, $response);
+            }
+        }
     }
 
 
@@ -211,7 +240,7 @@ class Router
      * @param $_
      * @param $method
      * @return mixed|null
-     */
+    */
     protected function get_route($_, $method)
     {
         foreach ($this->routes as $route) {
@@ -234,8 +263,8 @@ class Router
             $values = [];
             foreach ($params as $param) {
                 $current_index = array_search(":{$param}", $route["path_array"]);
-                $current_index = isset($this->request_params[$current_index]) ? $current_index : $current_index - 1;
-                $values[$param] = htmlspecialchars($this->request_params[$current_index]);
+                //last change :: edited by @codad5
+                $values[$param] = htmlspecialchars($this->request_params[$current_index -1]);
             }
             return $values;
         } catch (Exception $e) {
@@ -258,11 +287,12 @@ class Router
             }
 
             $route = $this->get_route($this->request_path, strtoupper($method));
-
+            // var_dump($route);
             $params = count($route["params"] ?? []) > 0 ? $this->get_params_values($route) : [];
             $response = new Response($this->source_path);
             $request = new Request([$_GET, $_POST], $params, $this->request_path, $this->source_path);
-
+            $this->run_middlewares($request, $response);
+            $this->load_sub_route($request, $response);
             if ($route !== null) {
                 if (count($route["middleware"]) > 0) {
                     $middleware = new Middleware($route["middleware"], $request, $response);

@@ -12,23 +12,16 @@ $jwt = new jwtT('helloworld');
 $router = new Router(__DIR__ . "/views", "");
 
 ## using codad5\php-inex to import sub - routes
+/** @var Router */
 $dynamic_routes = Import::this('./Routes/Dynamic');
+// $dashboard_route = require('./Routes/dashboard.php'); i had to comment this because the $router in the file overides the one in this file
+
+$router->run(function () {
+    echo "hello <br>";
+});
+
 $router->use_route($dynamic_routes);
-
-
-## using include_once or require_once to import sub - routes
-
-#================== Uncomment this block to try the use of require
-
-// $shop_route = require_once('Routes/Shop.php');
-// $router->use_route($shop_route);
-
-#===================End
-
-## due to the use of include_once / require_once $jwt is been overrided by the $jwt in Routes/Shop.php
-
-
-// var_dump($jwt); #uncomment this and the above code to see duff
+// $router->use_route($dashboard_route);
 
 
 /**

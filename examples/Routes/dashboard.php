@@ -5,16 +5,18 @@ use codad5\examples\middleware\jwtT;
 use Trulyao\PhpRouter\Router as Router;
 
 $jwt =  "hiigidhsd";
-$router = new Router(__DIR__ . "/views", "examples", '/dynamic');
+$router = new Router(__DIR__ . "/views", "examples", '/dashboard');
 
 
 $router->run(function(){
-    echo "Men and Test me<br>";
+    echo "Men and Test me <br>";
 });
+
 /**
  * @desc [GET] Single dynamic route
  * @route /dynamic/:id
  */
+
 $router->get('/:id', function ($req, $res) {
     return $res->send("<h1>Hello World</h1> </br> 
         Source: dynamic GET! </br> 
@@ -44,4 +46,4 @@ $router->get('/:id/:name', function ($req, $res) {
 });
 
 
-$export = $router;
+return $router;
