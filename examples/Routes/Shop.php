@@ -8,10 +8,17 @@ $jwt = 'xajnaoj';
 $router = new Router(__DIR__ . "/views", "examples", '/shop');
 
 
+$router->run(function($req, $res){
+    //redirect if not logged in
+    if(!isset($_SESSION['is_login']))
+    {
+        $res->redirect('/dynamic');
+    }
+});
 
 /**
  * @desc [GET] Single dynamic route
- * @route /dynamic/:id
+ * @route /shop/:id
  */
 $router->get('/:id', function ($req, $res) {
     return $res->send("<h1>Welcome to {$req->params("id")}</h1> </br> 
@@ -21,7 +28,7 @@ $router->get('/:id', function ($req, $res) {
 
 /**
  * @desc [GET] Mixed dynamic route
- * @route /dynamic/:id/nested
+ * @route /shop/:id/nested
  */
 $router->get('/:id/about', function ($req, $res) {
     return $res->send("<h1>About {$req->params("id")}</h1> </br> 
@@ -42,4 +49,4 @@ $router->get('/:id/:name', function ($req, $res) {
 });
 
 
-return $router;
+$export = $router;

@@ -14,13 +14,25 @@ $router = new Router(__DIR__ . "/views", "");
 ## using codad5\php-inex to import sub - routes
 /** @var Router */
 $dynamic_routes = Import::this('./Routes/Dynamic');
+
+/** @var Router */
+$shop_routes = Import::this('./Routes/Shop');
+
+/** @var Router */
+$api_routes = Import::this('./Routes/Api');
+
 // $dashboard_route = require('./Routes/dashboard.php'); i had to comment this because the $router in the file overides the one in this file
 
+//middleware  to always keep a session running
 $router->run(function () {
-    echo "hello <br>";
+    if(session_status() !== PHP_SESSION_ACTIVE){
+        session_start();
+    }
 });
 
 $router->use_route($dynamic_routes);
+$router->use_route($shop_routes);
+$router->use_route($api_routes);
 // $router->use_route($dashboard_route);
 
 
@@ -34,16 +46,16 @@ $router->get('/', function (Request $req, Response $res) {
                 Query(name): {$req->query('name')}")->status(200);
 });
 
-
 /**
- * @desc Serving a view
+ * @desc Rest rate limiting
  * @route /render
  */
-$router->get('/render', [$jwt, 'verify'], function ($req, $res) {
+$router->get('/reset', function ($req, $res) {
     // return $res->render("second.php", $req);
-    echo "hello world";
+    $_SESSION['rate_limit'] = 0;
+    unset($_SESSION['is_login']);
+    $res->redirect('/dynamic');
 });
-
 
 
 $router->get('/testjwt', [$jwt, 'create'], function ($req, $res) {
