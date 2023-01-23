@@ -29,7 +29,7 @@ class Router
     public function __construct($source_path, $base_path = "", $prefix_route = '')
     {
         $this->source_path = $source_path;
-        $this->prefix_route = $prefix_route;
+        $this->prefix_route = trim($prefix_route);
         $this->base_path = $base_path;
         $this->method = $_SERVER['REQUEST_METHOD'] ?? "GET";
         $this->strip_extra_url_data();
@@ -248,7 +248,7 @@ class Router
         foreach($this->sub_routes as $route)
         {
             $main_router = $this->get_route($_SERVER['REQUEST_URI'] ?? $this->request_path, strtoupper($_SERVER["REQUEST_METHOD"]));
-            if($main_router && strpos($main_router['path'], $route->prefix_route) === 0)
+            if($main_router && $route->get_route($_SERVER['REQUEST_URI'] ?? $this->request_path, strtoupper($_SERVER["REQUEST_METHOD"])))
             {
                 $route->run_middlewares($request, $response);
                 break;

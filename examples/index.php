@@ -24,11 +24,7 @@ $api_routes = Import::this('./Routes/Api');
 // $dashboard_route = require('./Routes/dashboard.php'); i had to comment this because the $router in the file overides the one in this file
 
 //middleware  to always keep a session running
-$router->run(function () {
-    if(session_status() !== PHP_SESSION_ACTIVE){
-        session_start();
-    }
-});
+
 
 $router->use_route($dynamic_routes);
 $router->use_route($shop_routes);
