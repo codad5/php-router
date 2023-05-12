@@ -46,6 +46,7 @@ RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
 - Provides request and response objects
 - Supports dynamic routing like `/:id` or `/:id/:name`
 - Supports 4 **major** HTTP methods (GET, POST, PUT, DELETE)
+- Supports breaking of routes to diffrent file
 - Uses callbacks to handle requests
 - Supports custom 404 and 500 error pages
 - Supports redirection
@@ -62,7 +63,12 @@ RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
 
 use \Trulyao\PhpRouter\Router as Router;
 
-$router = new Router(__DIR__."/views", "demo");
+$router = new Router(__DIR__."/views", "demo", '/');
+
+// Adding middleware
+$router->run(function($req, $res){
+     return $res->send("This middleware is called first before the main request!");
+});
 
 $router->get("/", function($req, $res) {
     return $res->send("<h1>Hello World</h1>")
@@ -99,6 +105,109 @@ $router->serve();
 `/views` - The directory where your views/controllers/source files are located.
 
 `/demo` - This is the base URL for your application eg. `api` for `/api/*` or `v1` for `/v1/*`.
+
+`/` - This is to tell the prefix path to each path in the router
+
+## Adding a Sub Route
+
+`index.php`
+
+```php
+<?php
+
+use \Trulyao\PhpRouter\Router as Router;
+
+// created this to avoid variable naming clash between files
+function get_route_object(string $filename){
+    return require_once $filename;
+}
+
+$router = new Router(__DIR__."/views", "demo", '/');
+
+// Adding middleware
+$router->run(function($req, $res){
+    return $res->send("This middleware is called first before the main request!");
+});
+
+$router->use_route(get_route_object('Routes/Dashboard.php'));
+$router->use_route(get_route_object('Routes/Auth.php'));
+
+$router->get("/", function($req, $res) {
+    return $res->send("<h1>Hello World</h1>")
+               ->status(200);
+});
+
+$router->get('/render', function ($req, $res) {
+    return $res->render("second.html", $req);
+});
+
+$router->post("/", function($req, $res) {
+   return $res->send([
+       "message" => "Hello World"
+   ]);
+});
+# Start the router - very important!
+$router->serve();
+```
+
+> NOTE : You can use [codad5/php-inex](https://github.com/codad5/php-inex) to import your routes easily
+
+`Routes/Dashboard.php`
+
+```php
+<?php
+
+use \Trulyao\PhpRouter\Router as Router;
+
+
+
+$router = new Router(__DIR__."/views", "demo", '/dashboard');
+
+// Adding middleware to make sure a user must be logged in to visit any route here
+$router->run(function($req, $res){
+   if(!isset($_SESSION['login_username'])) return $res->redirect('/login');
+});
+
+
+
+$router->get("/", function($req, $res) {
+    return $res->send("<h1>Welcome Back ".$_SESSION['login_username']."</h1>")
+               ->status(200);
+});
+
+// This is very important to make sure the route is added to the main router
+return $router;
+```
+
+`Routes/Auth.php`
+
+```php
+<?php
+
+use \Trulyao\PhpRouter\Router as Router;
+
+
+
+$router = new Router(__DIR__."/views", "demo", '/auth');
+
+// Adding middleware to make sure is been redirected to dashboard if already logged in
+$router->run(function($req, $res){
+   if(isset($_SESSION['login_username'])) return $res->redirect('/dashboard');
+});
+
+
+
+$router->get("/login", function($req, $res) {
+    return $res->render("login.html", $req);
+});
+
+$router->get("/signup", function($req, $res) {
+    return $res->render("signup.html", $req);
+});
+
+// This is very important to make sure the route is added to the main router
+return $router;
+```
 
 ## The `$req` object
 
