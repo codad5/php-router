@@ -1,5 +1,5 @@
 {
-  "name": "trulyao/php-router",
+  "name": "codad5/php-router",
   "description": "A simple express-style router for PHP",
   "version": "2.0.5",
   "type": "library",
@@ -12,14 +12,18 @@
   "license": "MIT",
   "autoload": {
     "psr-4": {
-      "Trulyao\\PhpRouter\\": "src/"
+      "Codad5\\PhpRouter\\": "src/"
     }
   },
-  "homepage": "https://github.com/aosasona/php-router",
+  "homepage": "https://github.com/codad5/php-router",
   "authors": [
     {
       "name": "Ayodeji O",
       "email": "osasonaayodeji1@gmail.com"
+    },
+    {
+      "name": "Chibueze A",
+      "email": "aniezeoformic@gmail.com"
     }
   ],
   "require": {
