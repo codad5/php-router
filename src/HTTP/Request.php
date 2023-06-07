@@ -1,6 +1,6 @@
 <?php
 
-namespace Trulyao\PhpRouter\HTTP;
+namespace Codad5\PhpRouter\HTTP;
 
 class Request
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace Trulyao\PhpRouter\HTTP;
+namespace Codad5\PhpRouter\HTTP;
 
 use phpDocumentor\Reflection\Types\Parent_;
-use Trulyao\PhpRouter\HTTP\Request as Request;
-use Trulyao\PhpRouter\HTTP\Response as Response;
+use Codad5\PhpRouter\HTTP\Request as Request;
+use Codad5\PhpRouter\HTTP\Response as Response;
 
 class Middleware
 {

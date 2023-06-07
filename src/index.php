@@ -1,5 +1,5 @@
 <?php
-namespace Trulyao\PhpRouter;
+namespace Codad5\PhpRouter;
 
 require __DIR__ . '../vendor/autoload.php';
 

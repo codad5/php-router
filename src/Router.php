@@ -1,5 +1,5 @@
 <?php
-namespace Trulyao\PhpRouter;
+namespace Codad5\PhpRouter;
 
 use Closure;
 use Exception;

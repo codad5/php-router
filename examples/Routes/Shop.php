@@ -2,7 +2,7 @@
 
 require_once('middleware/test.php');
 use codad5\examples\middleware\jwtT;
-use Trulyao\PhpRouter\Router as Router;
+use Codad5\PhpRouter\Router as Router;
 
 $jwt = 'xajnaoj';
 $router = new Router(__DIR__ . "/views", "examples", '/shop');

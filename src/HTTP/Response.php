@@ -1,8 +1,8 @@
 <?php
 
-namespace Trulyao\PhpRouter\HTTP;
+namespace Codad5\PhpRouter\HTTP;
 
-use Trulyao\PhpRouter\Engines\TemplateEngine;
+use Codad5\PhpRouter\Engines\TemplateEngine;
 
 class Response
 {

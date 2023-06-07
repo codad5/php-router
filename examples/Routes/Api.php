@@ -2,10 +2,10 @@
 
 require_once('middleware/test.php');
 use codad5\examples\middleware\jwtT;
-use Trulyao\PhpRouter\HTTP\Request;
-use Trulyao\PhpRouter\HTTP\Response;
+use Codad5\PhpRouter\HTTP\Request;
+use Codad5\PhpRouter\HTTP\Response;
 use Codad5\PhpInex\Import as Import;
-use Trulyao\PhpRouter\Router as Router;
+use Codad5\PhpRouter\Router as Router;
 
 $jwt = new jwtT('helloworld');
 $router = new Router(__DIR__ . "/views",  "examples", '/api');
