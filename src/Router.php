@@ -25,7 +25,7 @@ class Router
     protected ?string $route_cache;
     private $content_type;
 
-    public function __construct($source_path, $base_path = "")
+    public function __construct($source_path, $base_path = "/")
     {
         $this->source_path = $source_path;
         $this->base_path = $base_path;
@@ -126,7 +126,7 @@ class Router
     private function add_route($data, string $method = "GET")
     {
         $path = $this->route_cache !== null ? $this->route_cache : $data[0];
-
+        $path = "/".trim($this->base_path . $path, '/');
         list($params, $path, $path_array, $dynamic) = $this->extract_route_details($path);
 
         $this->routes[] = [

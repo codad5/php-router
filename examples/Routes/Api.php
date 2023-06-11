@@ -8,7 +8,7 @@ use Codad5\PhpInex\Import as Import;
 use Codad5\PhpRouter\Router as Router;
 
 $jwt = new jwtT('helloworld');
-$router = new Router(__DIR__ . "/views",  "examples", '/api');
+$router = new Router(__DIR__ . "/views",'/api');
 
 
 $router->run([$jwt, 'verify']);

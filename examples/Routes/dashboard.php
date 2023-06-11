@@ -5,7 +5,7 @@ use codad5\examples\middleware\jwtT;
 use Codad5\PhpRouter\Router as Router;
 
 $jwt =  "hiigidhsd";
-$router = new Router(__DIR__ . "/views", "examples", '/dashboard');
+$router = new Router(__DIR__ . "/views", "/dashboard");
 
 
 $router->run(function($req, $res){

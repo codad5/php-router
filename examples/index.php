@@ -9,7 +9,7 @@ use Codad5\PhpInex\Import as Import;
 use Codad5\PhpRouter\Router as Router;
 
 $jwt = new jwtT('helloworld');
-$router = new Router(__DIR__ . "/views", "");
+$router = new Router(__DIR__ . "/views");
 
 ## using codad5\php-inex to import sub - routes
 /** @var Router */

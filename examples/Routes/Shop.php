@@ -5,7 +5,7 @@ use codad5\examples\middleware\jwtT;
 use Codad5\PhpRouter\Router as Router;
 
 $jwt = 'xajnaoj';
-$router = new Router(__DIR__ . "/views", "examples", '/shop');
+$router = new Router(__DIR__ . "/views", '/shop');
 
 
 $router->run(function($req, $res){
@@ -21,7 +21,7 @@ $router->run(function($req, $res){
  * @route /shop/:id
  */
 $router->get('/:id', function ($req, $res) {
-    return $res->send("<h1>Welcome to {$req->params("id")}</h1> </br> 
+    return $res->send("<h1>Welcome to Shop {$req->params("id")}</h1> </br> 
                 Source: dynamic GET! </br> 
                 Params(ID): {$req->params("id")}")->status(200);
 });
