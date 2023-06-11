@@ -25,7 +25,7 @@ class Router
     protected ?string $route_cache;
     private $content_type;
 
-    public function __construct($source_path, $base_path = "/")
+    public function __construct($source_path, $base_path = "")
     {
         $this->source_path = $source_path;
         $this->base_path = $base_path;
@@ -138,7 +138,6 @@ class Router
             "path_array" => $path_array,
             "dynamic" => $dynamic
         ];
-
     }
 
 
@@ -229,10 +228,11 @@ class Router
      */
     public function use_route(Router $router): Router
     {
-
+        $base_path = trim($this->base_path, '/');
+        $path_array = !empty($base_path) ? [$base_path] : [];
         $this->sub_routes[] = $router;
-        $this->routes = array_merge(array_map(function ($data){
-            return [...$data, "path" => $this->base_path.$data['path']];
+        $this->routes = array_merge(array_map(function ($data) use  ($path_array){
+            return [...$data, "path" => $this->base_path.$data['path'], "path_array" => [...$path_array, ...$data['path_array']]];
         }, $router->routes), $this->routes);
         return $this;
     }
@@ -284,7 +284,7 @@ class Router
             foreach ($params as $param) {
                 $current_index = array_search(":{$param}", $route["path_array"]);
                 //last change :: edited by @codad5
-                $values[$param] = htmlspecialchars($this->request_params[$current_index -1]);
+                $values[$param] = htmlspecialchars($this->request_params[$current_index]);
             }
             return $values;
         } catch (Exception $e) {
@@ -307,7 +307,6 @@ class Router
             }
 
             $route = $this->get_route($this->request_path, strtoupper($method));
-            // var_dump($route);
             $params = count($route["params"] ?? []) > 0 ? $this->get_params_values($route) : [];
             $response = new Response($this->source_path);
             $request = new Request([$_GET, $_POST], $params, $this->request_path, $this->source_path);
@@ -400,7 +399,7 @@ class Router
             }
         }
         $dynamic = count($params) > 0;
-        return array($params, $path, $path_array, $dynamic);
+        return array($params, $path, array_values(array_filter($path_array, fn ($data) => !empty($data))), $dynamic);
     }
 
     /**
