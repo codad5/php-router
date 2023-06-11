@@ -63,7 +63,7 @@ RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
 
 use \Trulyao\PhpRouter\Router as Router;
 
-$router = new Router(__DIR__."/views", "demo", '/');
+$router = new Router(__DIR__."/views", '/');
 
 // Adding middleware
 $router->run(function($req, $res){
@@ -122,7 +122,7 @@ function get_route_object(string $filename){
     return require_once $filename;
 }
 
-$router = new Router(__DIR__."/views", "demo", '/');
+$router = new Router(__DIR__."/views",  '/');
 
 // Adding middleware
 $router->run(function($req, $res){
@@ -161,7 +161,7 @@ use \Trulyao\PhpRouter\Router as Router;
 
 
 
-$router = new Router(__DIR__."/views", "demo", '/dashboard');
+$router = new Router(__DIR__."/views", "/dashboard");
 
 // Adding middleware to make sure a user must be logged in to visit any route here
 $router->run(function($req, $res){
@@ -188,7 +188,7 @@ use \Trulyao\PhpRouter\Router as Router;
 
 
 
-$router = new Router(__DIR__."/views", "demo", '/auth');
+$router = new Router(__DIR__."/views", '/auth');
 
 // Adding middleware to make sure is been redirected to dashboard if already logged in
 $router->run(function($req, $res){
