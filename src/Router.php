@@ -20,7 +20,7 @@ class Router
      * Summary of sub_routes
      * @var array<Router>
      */
-    protected array $sub_routes;
+    protected array $sub_routes = [];
     protected array $allowed_content_types;
     protected ?string $route_cache;
     private $content_type;
@@ -244,12 +244,11 @@ class Router
      */
     private function load_sub_route(Request $request, Response $response)
     {
-        foreach($this->sub_routes as $route)
-        {
+        foreach ($this->sub_routes as $route) {
             $main_router = $this->get_route($_SERVER['REQUEST_URI'] ?? $this->request_path, strtoupper($_SERVER["REQUEST_METHOD"]));
-            if($main_router && $route->get_route($_SERVER['REQUEST_URI'] ?? $this->request_path, strtoupper($_SERVER["REQUEST_METHOD"])))
-            {
+            if ($main_router && $route->get_route($_SERVER['REQUEST_URI'] ?? $this->request_path, strtoupper($_SERVER["REQUEST_METHOD"]))) {
                 $route->run_middlewares($request, $response);
+                $route->load_sub_route($request, $response);
                 break;
             }
         }
