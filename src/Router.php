@@ -24,12 +24,10 @@ class Router
     protected array $allowed_content_types;
     protected ?string $route_cache;
     private $content_type;
-    protected $prefix_route = '';
 
-    public function __construct($source_path, $base_path = "", $prefix_route = '')
+    public function __construct($source_path, $base_path = "")
     {
         $this->source_path = $source_path;
-        $this->prefix_route = trim($prefix_route);
         $this->base_path = $base_path;
         $this->method = $_SERVER['REQUEST_METHOD'] ?? "GET";
         $this->strip_extra_url_data();
@@ -127,8 +125,7 @@ class Router
      */
     private function add_route($data, string $method = "GET")
     {
-        $path = $this->prefix_route;
-        $path .= $this->route_cache !== null ? $this->route_cache : $data[0];
+        $path = $this->route_cache !== null ? $this->route_cache : $data[0];
 
         list($params, $path, $path_array, $dynamic) = $this->extract_route_details($path);
 
@@ -234,7 +231,9 @@ class Router
     {
 
         $this->sub_routes[] = $router;
-        $this->routes = array_merge($router->routes, $this->routes);
+        $this->routes = array_merge(array_map(function ($data){
+            return [...$data, "path" => $this->base_path.$data['path']];
+        }, $router->routes), $this->routes);
         return $this;
     }
     /**

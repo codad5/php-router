@@ -6,7 +6,7 @@ use Codad5\PhpRouter\Router as Router;
 use Codad5\PhpRouter\HTTP\Response;
 
 $jwt =  "hiigidhsd";
-$router = new Router(__DIR__ . "/views", "examples", '/dynamic');
+$router = new Router(__DIR__ . "/views", "/dynamic");
 
 
 $router->run(function ($req, Response $res) {
